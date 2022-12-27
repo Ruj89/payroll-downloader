@@ -9,6 +9,7 @@ export class Downloader {
     downloader = new Downloader(logger)
     logger.info(`Log level set as ${configuration?.logger.level}`)
   }
+
   async download() {
     this.logger.info('Starting downloader process')
     const browser = await puppeteer.launch({
@@ -30,21 +31,21 @@ export class Downloader {
     this.logger.debug(`Documents dates: ${data.join(' ')}`)
   }
 
-  async login(page: Page) {
+  private async login(page: Page) {
     await page.goto('https://saas.hrzucchetti.it/mipstdscarrone/jsp/login.jsp')
     await page.waitForNavigation()
     await page.type('input[name=m_cUserName]', configuration?.portal.username!)
     await page.type('input[name=m_cPassword]', configuration?.portal.password!)
     await page.click('input.Accedi_ctrl')
   }
-  async goToMySpace(frameContent: Frame) {
+  private async goToMySpace(frameContent: Frame) {
     await frameContent.waitForSelector('text/MySpace')
     await new Promise((r) => setTimeout(r, 500))
     await frameContent.click('div.tabNavigation div.tab_item:not(.actived) a')
     await new Promise((r) => setTimeout(r, 500))
     await frameContent.click('div.tabNavigation div.tab_item:not(.actived) a')
   }
-  async extractDocumentTable(frameContent: Frame) {
+  private async extractDocumentTable(frameContent: Frame) {
     return await (await frameContent.waitForSelector(
       "xpath///td[contains(@class,'icon_font_grid')]/../..",
     ))!.evaluate((e) =>

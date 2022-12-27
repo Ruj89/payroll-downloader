@@ -6,7 +6,7 @@ export class CloudStorage {
   private client: Auth.JWT
   private drive: drive_v3.Drive | undefined
 
-  constructor(public logger: winston.Logger) {
+  constructor(private logger: winston.Logger) {
     this.client = new google.auth.JWT(
       keys.client_email,
       undefined,
@@ -19,7 +19,7 @@ export class CloudStorage {
     cloudStorage = new CloudStorage(logger)
   }
 
-  async authorize() {
+  private async authorize() {
     if (this.drive) return
     await this.client.authorize()
     this.drive = google.drive({ version: 'v3', auth: this.client })
