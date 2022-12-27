@@ -6,6 +6,7 @@ import {
 } from './configuration'
 import { downloader, Downloader } from './downloader'
 import logger from './logger'
+import { organizer, Organizer } from './organizer'
 
 /**
  * Main process
@@ -19,14 +20,26 @@ async function main() {
 
   // Launch the downloader process
   Downloader.launch(logger)
-  await downloader?.download()
-
-  // Launch the organizer process
-  // TODO
-
   // Launch the storage process
   CloudStorage.launch(logger)
-  await cloudStorage?.list()
+  // Launch the storage process
+  Organizer.launch(logger)
+
+  // Check if processes are started correctly
+  if (!downloader) throw new Error('Downloaded not started correctly')
+  if (!cloudStorage) throw new Error('Cloud storage not started correctly')
+  if (!organizer) throw new Error('Organizer not started correctly')
+
+  // List the last available elements to be downloaded
+  let downloaderList = await downloader.list()
+  // List the last synchonized elements
+  let storageList = await cloudStorage.list()
+
+  // Launch the organizer process
+  let toBeDownloadedIndexes = organizer.getIndexes(downloaderList, storageList)
+
+  // Download the missing files
+  // TODO
 }
 
 main()

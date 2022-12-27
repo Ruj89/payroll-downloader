@@ -25,22 +25,25 @@ export class CloudStorage {
     this.drive = google.drive({ version: 'v3', auth: this.client })
   }
 
-  async list() {
+  async list(): Promise<string[]> {
     await this.authorize()
     const response = await this.drive!.files.list({
       pageSize: 10,
-      fields: 'nextPageToken, files(id, name)',
+      fields: 'nextPageToken, files(name)',
       orderBy: 'createdTime desc',
       q: "name != 'Buste paga'",
     })
     const files = response.data.files
     if (files?.length) {
+      let result = files.map((file) => file.name!)
       this.logger.debug(
-        `Files: ${files.map((file) => `${file.name} (${file.id})`).join(' ')}`,
+        `Files: ${files.map((file) => `${file.name}`).join(' ')}`,
       )
+      return result
     } else {
       this.logger.debug('No files found.')
     }
+    return []
   }
 }
 

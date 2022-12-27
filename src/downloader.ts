@@ -7,10 +7,9 @@ export class Downloader {
 
   static launch(logger: winston.Logger) {
     downloader = new Downloader(logger)
-    logger.info(`Log level set as ${configuration?.logger.level}`)
   }
 
-  async download() {
+  async list(): Promise<string[]> {
     this.logger.info('Starting downloader process')
     const browser = await puppeteer.launch({
       slowMo: 10,
@@ -29,6 +28,7 @@ export class Downloader {
     this.logger.info('Analyzing table content')
     let data = await this.extractDocumentTable(frameContent)
     this.logger.debug(`Documents dates: ${data.join(' ')}`)
+    return data
   }
 
   private async login(page: Page) {
@@ -45,12 +45,12 @@ export class Downloader {
     await new Promise((r) => setTimeout(r, 500))
     await frameContent.click('div.tabNavigation div.tab_item:not(.actived) a')
   }
-  private async extractDocumentTable(frameContent: Frame) {
+  private async extractDocumentTable(frameContent: Frame): Promise<string[]> {
     return await (await frameContent.waitForSelector(
       "xpath///td[contains(@class,'icon_font_grid')]/../..",
     ))!.evaluate((e) =>
       Array.from(e.querySelectorAll('tr')).map(
-        (tr) => tr.children[3].textContent,
+        (tr) => tr.children[3].textContent!,
       ),
     )
   }
