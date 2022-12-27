@@ -10,6 +10,7 @@
   "author": "Ruggero \"RuJ\" Russo",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^16.0.3",
     "puppeteer": "^19.4.1",
     "winston": "^3.8.2"
   },
