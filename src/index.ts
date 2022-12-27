@@ -1,17 +1,39 @@
-import configuration, { Configuration } from "./configuration";
-import logger from "./logger";
+import { CloudStorage, cloudStorage } from './cloudstorage'
+import {
+  Configuration,
+  configuration,
+  ConfigurationError,
+} from './configuration'
+import { downloader, Downloader } from './downloader'
+import logger from './logger'
 
 /**
  * Main process
  */
 async function main() {
-    // Launch the configuration process
-    Configuration.launch(logger);
-    // Launch the downloader process
-    // Launch the organizer process
-    // Launch the storage process
+  // Launch the configuration process
+  Configuration.launch(logger)
+  configuration?.logger.debug(
+    'Environment setup completed, starting the process',
+  )
+
+  // Launch the downloader process
+  Downloader.launch(logger)
+  await downloader?.download()
+
+  // Launch the organizer process
+  // TODO
+
+  // Launch the storage process
+  CloudStorage.launch(logger)
+  await cloudStorage?.list()
 }
 
-main().then(() => {
-    process.exit();
-});
+main()
+  .catch((e) => {
+    if (e instanceof ConfigurationError) logger.error(e.stack)
+    else configuration?.logger.error(e.stack)
+  })
+  .finally(() => {
+    process.exit()
+  })
