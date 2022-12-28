@@ -7,13 +7,20 @@ export class Organizer {
     organizer = new Organizer(logger)
   }
 
-  getIndexes(downloaderList: string[], storageList: string[]): number[] {
+  getIndexes(
+    downloaderList: string[],
+    storageList: string[],
+  ): { index: number; date: Date }[] {
     let downloaderListRegex = /(\d{2})-(\d{2})-(\d{4}) .*/
     let downloaderDates = downloaderList.map((date) => {
       let groups = downloaderListRegex
         .exec(date)!
         .map((n) => Number.parseInt(n))
-      return new Date(groups[3], groups[2] - 1, groups[1] > 15 ? 15 : 1)
+      return new Date(
+        groups[3],
+        groups[1] > 15 ? groups[2] - 1 : groups[2] - 2,
+        groups[1] > 15 ? 15 : 1,
+      )
     })
 
     let storageListRegex = /.*_(\d{2})_(\d{2})(_AGG)?\..*/
@@ -26,7 +33,7 @@ export class Organizer {
       return new Date(groups[1] + 2000, groups[2] - 1, groups[3])
     })
 
-    let indexes: number[] = []
+    let indexes: { index: number; date: Date }[] = []
     for (
       let downloaderIndex = 0;
       downloaderIndex < downloaderDates.length;
@@ -46,11 +53,15 @@ export class Organizer {
           break
         }
       }
-      if (!alreadyDownloaded) indexes.push(downloaderIndex)
+      if (!alreadyDownloaded)
+        indexes.push({
+          index: downloaderIndex,
+          date: downloaderDates[downloaderIndex],
+        })
     }
     this.logger.info(
       `The following files are not available on storage: ${indexes.map(
-        (i) => downloaderList[i],
+        (i) => downloaderList[i.index],
       )}`,
     )
     return indexes

@@ -39,14 +39,20 @@ async function main() {
   let toBeDownloadedIndexes = organizer.getIndexes(downloaderList, storageList)
 
   // Download the missing files
-  // TODO
+  await downloader.downloadAll(toBeDownloadedIndexes.map((i) => i.index))
+
+  // Upload the downloaded files
+  await cloudStorage.upload(toBeDownloadedIndexes)
 }
+
+let unexpectedError: Error | undefined
 
 main()
   .catch((e) => {
     if (e instanceof ConfigurationError) logger.error(e.stack)
-    else configuration?.logger.error(e.stack)
+    else unexpectedError = <Error>e
   })
   .finally(() => {
+    if (unexpectedError) throw unexpectedError
     process.exit()
   })
