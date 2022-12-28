@@ -1,5 +1,5 @@
 {
-  "name": "studio-scarrone-downloader",
+  "name": "payroll-downloader",
   "version": "1.0.0",
   "description": "A downloader that let you archive the payroll",
   "main": "index.ts",

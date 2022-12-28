@@ -1,4 +1,4 @@
-# Studio Scarrone Downloader
+# Payroll Downloader
 
 A downloader that let you archive the payroll
 
