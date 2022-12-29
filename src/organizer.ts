@@ -13,14 +13,16 @@ export class Organizer {
   ): { index: number; date: Date }[] {
     let downloaderListRegex = /(\d{2})-(\d{2})-(\d{4}) .*/
     let downloaderDates = downloaderList.map((date) => {
-      let groups = downloaderListRegex
-        .exec(date)!
-        .map((n) => Number.parseInt(n))
-      return new Date(
-        groups[3],
-        groups[1] > 15 ? groups[2] - 1 : groups[2] - 2,
-        groups[1] > 15 ? 15 : 1,
-      )
+      if (downloaderListRegex.test(date)) {
+        let groups = downloaderListRegex
+          .exec(date)!
+          .map((n) => Number.parseInt(n))
+        return new Date(
+          groups[3],
+          groups[1] > 15 ? groups[2] - 1 : groups[2] - 2,
+          groups[1] > 15 ? 15 : 1,
+        )
+      } else return null
     })
 
     let storageListRegex = /.*_(\d{2})_(\d{2})(_AGG)?\..*/
@@ -39,6 +41,7 @@ export class Organizer {
       downloaderIndex < downloaderDates.length;
       downloaderIndex++
     ) {
+      if (downloaderDates[downloaderIndex] == null) continue
       let alreadyDownloaded = false
       for (
         let storageIndex = 0;
@@ -46,7 +49,7 @@ export class Organizer {
         storageIndex++
       ) {
         if (
-          downloaderDates[downloaderIndex].getTime() ==
+          downloaderDates[downloaderIndex]!.getTime() ==
           storageDates[storageIndex].getTime()
         ) {
           alreadyDownloaded = true
@@ -56,7 +59,7 @@ export class Organizer {
       if (!alreadyDownloaded)
         indexes.push({
           index: downloaderIndex,
-          date: downloaderDates[downloaderIndex],
+          date: downloaderDates[downloaderIndex]!,
         })
     }
     this.logger.info(

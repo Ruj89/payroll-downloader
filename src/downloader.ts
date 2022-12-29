@@ -60,8 +60,10 @@ export class Downloader {
     return await (await frameContent.waitForSelector(
       "xpath///td[contains(@class,'icon_font_grid')]/../..",
     ))!.evaluate((e) =>
-      Array.from(e.querySelectorAll('tr')).map(
-        (tr) => tr.children[3].textContent!,
+      Array.from(e.querySelectorAll('tr')).map((tr) =>
+        tr.children[2].textContent?.match(/.*Libro unico.*/)
+          ? tr.children[3].textContent!
+          : '',
       ),
     )
   }
