@@ -13,7 +13,7 @@ export class Downloader {
    *  Constructor
    *  @param logger the logger instance
    */
-  constructor(private logger: winston.Logger) {}
+  constructor(private logger: winston.Logger) { }
 
   /**
    * Initialize the singleton
@@ -32,7 +32,8 @@ export class Downloader {
     this.logger.info('Starting downloader process');
     this.browser = await puppeteer.launch({
       slowMo: 100,
-      defaultViewport: null
+      defaultViewport: null,
+      headless: "new"
     });
     this.page = await this.browser.newPage();
 
@@ -62,7 +63,7 @@ export class Downloader {
     await page.goto('https://saas.hrzucchetti.it/mipstdscarrone/jsp/login.jsp');
     try {
       await page.waitForNavigation();
-    } catch (e) {}
+    } catch (e) { }
     await page.type('input[name=m_cUserName]', configuration?.portal.username!);
     await page.type('input[name=m_cPassword]', configuration?.portal.password!);
     // Click on submit
