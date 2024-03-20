@@ -33,7 +33,8 @@ export class Downloader {
     this.browser = await puppeteer.launch({
       slowMo: 100,
       defaultViewport: null,
-      headless: "new"
+      headless: true,
+      args: [(process.env.SANDBOX !== "true" && process.env.SANDBOX !== "1" && process.env.SANDBOX !== "yes") ? "--no-sandbox" : ""]
     });
     this.page = await this.browser.newPage();
 
