@@ -61,7 +61,7 @@ export class Downloader {
    */
   private async login(page: Page): Promise<void> {
     // Fill the form
-    await page.goto('https://saas.hrzucchetti.it/mipstdscarrone/jsp/login.jsp');
+    await page.goto('https://saas.studioscarrone.it/mipzucchetti/jsp/login.jsp');
     try {
       await page.waitForNavigation();
     } catch (e) { }
