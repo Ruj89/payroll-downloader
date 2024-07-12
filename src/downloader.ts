@@ -129,6 +129,11 @@ export class Downloader {
       };
     });
 
+    // In case of dialog, execute
+    this.page!.on('dialog', async dialog => {
+      if (dialog.message().includes("Richiesta certificazione di visione. Vuoi continuare?"))
+        await dialog.accept();
+    });
     // Click the link
     await frameContent.click(`xpath/(//td[contains(@class,'icon_font_grid')]//a)[${index + 1}]`);
     this.logger.debug(`Link clicked`);
