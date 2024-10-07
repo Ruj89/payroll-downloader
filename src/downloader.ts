@@ -44,7 +44,13 @@ export class Downloader {
 
     // Enter the documents page
     this.logger.info('Navigating to MySpace');
-    const frame = await this.page.waitForSelector('iframe[name=Main]');
+    let frame;
+    try {
+      frame = await this.page.waitForSelector('iframe[name=Main]');
+    } catch (e: any) {
+      const messageContainer = await this.page.waitForSelector('#swal2-html-container');
+      throw await messageContainer?.evaluate((e) => e.textContent ?? "Unknown error");
+    }
     const frameContent = (await frame!.contentFrame())!;
     await this.goToMySpace(frameContent);
 
